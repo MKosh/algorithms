@@ -1,0 +1,13 @@
+Repo for working through the Princeton algorithms course by Robert Sedgewick and Kevin Wayne.
+
+Need to include the algorithms java library stuff. I already modified the scripts in the
+bin directory to work on my NixOS install, so I renamed the dir to mybin. Keep that version
+and delete the bin that comes with lift-cli.
+
+`````
+cd external
+sudo curl -O "https://lift.cs.princeton.edu/java/linux/lift-cli.zip"
+unzip lift-cli.zip
+rm lift-cli.zip
+rm bin
+````

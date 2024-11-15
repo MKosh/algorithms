@@ -1,0 +1,29 @@
+#!/usr/bin/env zsh
+#!/bin/bash
+
+# this must match the install directory 
+# LIFT="/usr/local/lift"
+LIFT_LIB="$HOME/code/dsa/algorithms/external/lift/lib"
+
+# use algs4.jar because jshell can't access classes in default package (!)
+CLASSPATH=".:${LIFT}/lib/algs4.jar"
+
+# the jshell startup script (to import standard libraries)
+JSHELL_SCRIPT="${LIFT}/introcs.jshell"
+
+# execute on Windows/Linux using "jshell" but on OS X using "java_home -exec jshell"
+JSHELL="jshell"
+if [ -f /usr/libexec/java_home ]; then
+    JSHELL="/usr/libexec/java_home -exec jshell"
+fi
+
+# set term to cygwin if git bash on Windows to fix escape sequence issue
+if [[ "$OSTYPE" == "msys" ]]; then
+    TERM=cygwin
+fi
+
+# executes with the textbook libraries in the classpath 
+$JSHELL --class-path "$CLASSPATH" \
+        --startup PRINTING \
+        --startup "$JSHELL_SCRIPT" \
+        "$@"

@@ -1,0 +1,6 @@
+.cache/
+build/
+.direnv
+external/bin/
+external/lift/
+*.class
