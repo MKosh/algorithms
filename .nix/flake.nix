@@ -15,6 +15,10 @@
       packages = with pkgs; [
         jdk
         python3
+        clang-tools
+        clang
+        cmake
+        gnumake
       ];
 
       shellHook = ''

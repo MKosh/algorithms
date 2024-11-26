@@ -4,3 +4,4 @@ build/
 external/bin/
 external/lift/
 *.class
+*.zip

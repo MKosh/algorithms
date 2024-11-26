@@ -25,7 +25,7 @@ if [ ! -n "$1" ]; then
 fi
 
 # ignore -cos126 arguments (since currently only one version of pmd.xml)
-if [ "$1" == "-cos126" ]; then
+if [[ "$1" == "-cos126" ]]; then
         shift
 elif [ "$1" = "-cos226" ]; then
         shift
