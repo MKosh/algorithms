@@ -1,1 +1,7 @@
 add_executable(linked_list linked_list.c)
+# set(CMAKE_C_FLAGS -fsanitize=address)
+# set(CMAKE_EXE_LINKER_FLAGS -fsanitize=address)
+# add_compile_options(-fsanitize=address)
+# add_link_options(-fsanitize=address)
+target_compile_options(linked_list PRIVATE -fsanitize=address)
+target_link_options(linked_list PRIVATE -fsanitize=address)
