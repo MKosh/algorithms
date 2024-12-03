@@ -1,18 +1,10 @@
-#include <stdio.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include "stack.h"
 
-typedef struct Node Node;
-struct Node {
-  int value;
-  Node* next;
-};
 
-typedef struct Stack Stack;
-struct Stack {
-  int count;
-  Node* head;
-};
-
+////////////////////////////////////////////////////////////////////////////////
+/// Push to the top of the stack
 void Push(Stack* stack, int value) {
   stack->count++;
   Node* old_head = stack->head;
@@ -21,6 +13,8 @@ void Push(Stack* stack, int value) {
   stack->head->next = old_head;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+/// Push to the top of the stack with logging
 void PushLog(Stack* stack, int value) {
   stack->count++;
   Node* old_head = stack->head;
@@ -30,6 +24,8 @@ void PushLog(Stack* stack, int value) {
   printf("Push node %d: value = %d\n", stack->count, stack->head->value);
 }
 
+////////////////////////////////////////////////////////////////////////////////
+/// Pop the top of the stack
 int Pop(Stack* stack) {
   Node* old_head = stack->head;
   stack->head = stack->head->next;
@@ -39,6 +35,8 @@ int Pop(Stack* stack) {
   return value;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+/// Pop the top of the stack with logging
 int PopLog(Stack* stack) {
   Node* old_head = stack->head;
   stack->head = stack->head->next;
@@ -49,6 +47,8 @@ int PopLog(Stack* stack) {
   return value;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+/// Pop the top of the stack without logging
 void PopQuiet(Stack* stack) {
   Node* old_head = stack->head;
   if (stack->head != nullptr) {
@@ -61,6 +61,8 @@ void PopQuiet(Stack* stack) {
   stack->count--;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+/// Clear the stack without logging
 void Clear(Stack* stack) {
   puts("Clearing stack");
   for (Node* n = stack->head; n != nullptr; n = stack->head) {
@@ -68,6 +70,8 @@ void Clear(Stack* stack) {
   }
 }
 
+////////////////////////////////////////////////////////////////////////////////
+/// Clear the stack with logging
 void ClearLog(Stack* stack) {
   puts("Clearing stack");
   for (Node* n = stack->head; n != nullptr; n = stack->head) {
@@ -75,7 +79,8 @@ void ClearLog(Stack* stack) {
   }
 }
 
-
+////////////////////////////////////////////////////////////////////////////////
+/// Print the Stack
 void Print(Stack* stack) {
   int iter = 0;
   for (Node* n = stack->head; n != nullptr; n = n->next) {
@@ -83,44 +88,4 @@ void Print(Stack* stack) {
     iter++;
     if (iter > stack->count) break;
   }
-}
-
-// Ignore this, just trying to get a memory error to make sure Asan is working...
-// it's not btw...
-int x[10];
-
-int main(int argc, char *argv[])
-{
-
-  // Ignore this, just trying to get a memory error to make sure Asan is working...
-  // it's not btw...
-  /* x[10] = 5; */
-
-  Stack s = { 0, nullptr };
-
-  for (int i = 0; i < 3; ++i) {
-    Push(&s, i);
-  }
-
-  Print(&s);
-
-  /* for (Node* n = s.head; n != nullptr; n = s.head) { */
-  /*   printf("Pop: %d, n->next: %p\n", Pop(&s), s.head); */
-  /* } */
-  puts("");
-  PopLog(&s);
-
-  puts("");
-  for (int i = 3; i < 6; ++i) {
-    PushLog(&s, i);
-  }
-
-  puts("");
-  Print(&s);
-
-  puts("");
-  ClearLog(&s);
-  Print(&s);
-
-  return EXIT_SUCCESS;
 }
