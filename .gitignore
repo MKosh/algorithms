@@ -5,3 +5,4 @@ external/bin/
 external/lift/
 *.class
 *.zip
+.zig-cache
