@@ -42,26 +42,38 @@ pub fn Stack(comptime T: type) type {
             return .{ .items = buffer[0..], .capacity = capacity, .length = 0, .allocator = allocator };
         }
 
+        fn resize(self: *Self, size: usize) !void {
+            if (self.capacity == size) {
+                return;
+            }
+            var temp = try self.allocator.alloc(T, size);
+            @memcpy(temp[0..self.capacity], self.items);
+            self.allocator.free(self.items);
+            self.items = temp;
+            self.capacity = size;
+        }
+
         pub fn push(self: *Self, value: T) !void {
             if (self.length + 1 > self.capacity) {
-                var temp = try self.allocator.alloc(T, self.capacity * 2);
-                @memcpy(temp[0..self.capacity], self.items);
-                self.allocator.free(self.items);
-                self.items = temp;
-                self.capacity = self.capacity * 2;
+                try self.resize(self.capacity * 2);
             }
 
             self.items[self.length] = value;
             self.length += 1;
         }
 
-        pub fn pop(self: *Self) ?u32 {
+        pub fn pop(self: *Self) ?T {
             if (self.length == 0) {
                 return null;
             }
             const temp = self.items[self.length - 1];
             self.items[self.length - 1] = undefined;
             self.length -= 1;
+            if (self.length > 0 and self.length == self.capacity/4) {
+                self.resize(self.capacity / 2) catch {
+                    print("Cannot resize array after pop, lengh: {d}, capacity: {d}\n", .{self.length, self.capacity});
+                };
+            }
             return temp;
         }
 
@@ -76,16 +88,17 @@ pub fn main() !void {}
 test "Stack" {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     const allocator = gpa.allocator();
-    var stack = try Stack(u32).init(allocator, 10);
+    var stack = try Stack(u32).init(allocator, 1);
     try stack.push(1);
     try stack.push(3);
-    try expect(stack.capacity == 10);
     try expect(stack.items[0] == 1);
     try expect(stack.items[1] == 3);
     try expect(stack.pop() == 3);
     try expect(stack.pop() == 1);
     try expect(stack.pop() == null);
     try expect(stack.length == 0);
+    try stack.resize(10);
+    try expect(stack.capacity == 10);
     stack.deinit();
 }
 
