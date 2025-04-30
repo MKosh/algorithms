@@ -1,4 +1,5 @@
 const std = @import("std");
+const print = std.debug.print;
 const expect = std.testing.expect;
 const Allocator = std.mem.Allocator;
 
@@ -39,15 +40,34 @@ pub fn Stack(comptime T: type) type {
         }
         
         pub fn pop(self: *Self) ?T {
-            if (self.length == 0) {
-                return null;
-            }
-            const item = self.first.?.data;
-            const temp = self.first.?.next;
-            self.allocator.destroy(self.first.?);
-            self.first = temp;
+            const first = self.first orelse return null;
+            const item = first.data;
+            self.first = first.next;
+            self.allocator.destroy(first);
             self.length -= 1;
             return item;
+        }
+
+        pub fn delete(self: *Self, k: usize) void {
+            var iter = self.first orelse return;
+            if (k == 0) {
+                self.first = iter.next;
+                self.allocator.destroy(iter);
+                self.length -= 1;
+                return;
+            }
+
+            for (0..k - 1) |_| {
+                if (iter.next) |next| {
+                    iter = next;
+                }
+            }
+
+            if (iter.next) |kth_node| {
+                iter.next = kth_node.next;
+                self.allocator.destroy(kth_node);
+            }
+            self.length -= 1;
         }
 
     };
@@ -64,6 +84,34 @@ test "Linked list stack" {
     try expect(stack.pop() == 3);
     try expect(stack.pop() == 1);
     try expect(stack.pop() == null);
+    try stack.push(0);
+    try stack.push(1);
+    try stack.push(2);
+    try stack.push(3);
+    try expect(stack.length == 4);
+    var it = stack.first;
+    while (it) |iter| : (it = iter.next) {
+        print("node: {d}\n", .{iter.data});
+    }
+    stack.delete(0);
+    try expect(stack.length == 3);
+
+    print("\n", .{});
+    it = stack.first;
+    while (it) |iter| : (it = iter.next) {
+        print("node: {d}\n", .{iter.data});
+    }
+
+    stack.delete(1);
+    try expect(stack.length == 2);
+
+    print("\n", .{});
+    it = stack.first;
+    while (it) |iter| : (it = iter.next) {
+        print("node: {d}\n", .{iter.data});
+    }
+
 }
 
-pub fn main() void {}
+pub fn main() void {
+}
